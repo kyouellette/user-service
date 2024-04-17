@@ -7,6 +7,8 @@ export class UserResponseDTO {
   lastName?: string;
   username?: string;
   email?: string;
+  lastClaim?: Date;
+  twitchApproved?: boolean;
   createdAt?: Date;
   twitchRefreshToken?: string;
   twitchAccessToken?: string;
@@ -18,10 +20,12 @@ export class UserResponseDTO {
     this.twitchAccessToken = userData?.twitchAccessToken;
     this.twitchUsername = userData?.twitchUsername;
     this.userId = userData?.userId;
-    this.firstName = userData.firstName;
-    this.lastName = userData.lastName;
-    this.username = userData.username;
-    this.email = userData.email;
-    this.createdAt = userData.createdAt;
+    this.lastClaim = userData?.lastClaim;
+    this.firstName = userData?.firstName;
+    this.twitchApproved = userData?.twitchApproved;
+    this.lastName = userData?.lastName;
+    this.username = userData?.username;
+    this.email = userData?.email;
+    this.createdAt = userData?.createdAt;
   }
 }

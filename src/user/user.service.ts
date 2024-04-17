@@ -8,12 +8,15 @@ import { TwitchResponseDTO } from './dto/twitch-response.dto';
 import { CreateTwitchDTO } from './dto/create-twitch.dto';
 import { TwitchUsersResponseDTO } from './dto/twitch-users-response.dto';
 import { RefreshTwitchDTO } from './dto/refresh-twitch.dto';
+import { ClaimDTO } from './dto/claim.dto';
+import { WalletService } from 'src/wallet/wallet.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly walletService: WalletService,
   ) {}
 
   async createUser(data: CreateUserDTO): Promise<UserResponseDTO> {
@@ -26,6 +29,7 @@ export class UserService {
         lastName,
         email,
         userId,
+        twitchApproved: false,
       });
     } catch (error) {
       throw new Error(error);
@@ -81,6 +85,40 @@ export class UserService {
       },
     );
     return new RefreshTwitchDTO({ oldTwitchAccessToken, newTwitchAccessToken });
+  }
+
+  async claim(data: ClaimDTO): Promise<ClaimDTO> {
+    const { userId, date } = data;
+    await this.userRepository.update(
+      {
+        userId: userId,
+      },
+      {
+        lastClaim: date,
+      },
+    );
+    try {
+      this.walletService.createTransaction(userId, '25', 'add').subscribe(
+        () => console.log(`User claimed points: ${userId}`),
+        (error) => console.error('Error creating transaction:', error),
+      );
+    } catch (error) {
+      console.log('Error adding funds for user:', userId);
+    }
+    return new ClaimDTO({ userId, date });
+  }
+
+  async approve(data: { userId: string }): Promise<string> {
+    const { userId } = data;
+    await this.userRepository.update(
+      {
+        userId: userId,
+      },
+      {
+        twitchApproved: true,
+      },
+    );
+    return userId;
   }
 
   async getTwitchUsernames(): Promise<TwitchUsersResponseDTO[]> {

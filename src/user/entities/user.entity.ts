@@ -19,6 +19,12 @@ export class UserEntity extends BaseEntity {
   username: string;
 
   @Column({ nullable: true })
+  lastClaim: Date;
+
+  @Column({ nullable: true })
+  twitchApproved: boolean;
+
+  @Column({ nullable: true })
   twitchRefreshToken: string;
 
   @Column({ nullable: true })

@@ -5,6 +5,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { CreateTwitchDTO } from './dto/create-twitch.dto';
 import { TwitchUsersResponseDTO } from './dto/twitch-users-response.dto';
 import { RefreshTwitchDTO } from './dto/refresh-twitch.dto';
+import { ClaimDTO } from './dto/claim.dto';
 
 @Controller('user')
 export class UserController {
@@ -28,6 +29,16 @@ export class UserController {
   @Patch('/twitch/add')
   saveTwitch(@Body() twitchData: CreateTwitchDTO): Promise<UserResponseDTO> {
     return this.userService.saveTwitch(twitchData);
+  }
+
+  @Patch('/claim')
+  claim(@Body() data: ClaimDTO): Promise<UserResponseDTO> {
+    return this.userService.claim(data);
+  }
+
+  @Patch('/approve')
+  approve(@Body() data: { userId: string }): Promise<string> {
+    return this.userService.approve(data);
   }
 
   @Patch('/twitch/refresh')
